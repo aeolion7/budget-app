@@ -18,12 +18,15 @@ const UIController = (function () {
   return {
     getInput: function () {
       return {
-        // either income or expenses
+        // type is either income or expenses
         type: document.querySelector(DOMstrings.inputType).value,
+        // transaction identifier
         description: document.querySelector(DOMstrings.inputDescription).value,
+        // how much
         value: document.querySelector(DOMstrings.inputValue).value
       };
     },
+    // makes the DOMstrings object public
     getDOMStrings: function () {
       return DOMstrings;
     }
