@@ -23,7 +23,7 @@ const UIController = (function () {
         // transaction identifier
         description: document.querySelector(DOMstrings.inputDescription).value,
         // how much
-        value: document.querySelector(DOMstrings.inputValue).value
+        value: document.querySelector(DOMstrings.inputValue).value,
       };
     },
     // makes the DOMstrings object public
