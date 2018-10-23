@@ -18,6 +18,18 @@ const budgetController = (function () {
       this.value = value;
     }
   }
+
+  // better to have one data structure than random floating variables
+  const data = {
+    allItems: {
+      exp: [],
+      inc: []
+    },
+    totals: {
+      exp: 0,
+      inc: 0
+    }
+  };
 })();
 
 // UIController
