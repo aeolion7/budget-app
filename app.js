@@ -20,9 +20,9 @@ const UIController = (function () {
       return {
         // type is either income or expenses
         type: document.querySelector(DOMstrings.inputType).value,
-        // transaction identifier
+        // description based on user input
         description: document.querySelector(DOMstrings.inputDescription).value,
-        // how much
+        // value based on user input
         value: document.querySelector(DOMstrings.inputValue).value
       };
     },
