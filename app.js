@@ -2,7 +2,22 @@
 
 // budgetController
 const budgetController = (function () {
+  // use objects to store descriptions, values, and IDs
+  class Expense {
+    constructor(id, description, value) {
+      this.id = id;
+      this.description = description;
+      this.value = value;
+    }
+  }
 
+  class Income {
+    constructor(id, description, value) {
+      this.id = id;
+      this.description = description;
+      this.value = value;
+    }
+  }
 })();
 
 // UIController
