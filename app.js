@@ -30,6 +30,34 @@ const budgetController = (function () {
       inc: 0
     }
   };
+
+  return {
+    // allow other modules to add an item into data structure
+    addItem: function (type, desc, val) {
+      let newItem, ID;
+      // create new ID
+      // TODO: fix TypeError: Cannot read property 'length' of undefined on following line
+      if (data.allItems[type].length > 0) {
+        ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+      } else {
+        ID = 0;
+      }
+
+      // create new item based on inc or exp type
+      if (type === 'exp') {
+        newItem = new Expense(ID, desc, val);
+      } else if (type === 'inc') {
+        newItem = new Income(ID, desc, val);
+      }
+
+      // push item into data structure
+      data.allItems[type].push(newItem);
+      return newItem;
+    },
+    testing: function () {
+      console.log(data);
+    }
+  };
 })();
 
 // UIController
@@ -78,8 +106,9 @@ const controller = (function (budgetCtrl, UICtrl) {
   const ctrlAddItem = function () {
     // get field input data
     const input = UICtrl.getInput();
-    console.log(input);
+
     // add item to budget controller
+    const newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
     // add new item to UI
 
