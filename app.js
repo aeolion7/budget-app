@@ -1,6 +1,6 @@
 // IIFE modules
 
-// budgetController
+// Budget controller module
 const budgetController = (function () {
   // use objects to store descriptions, values, and IDs
   class Expense {
@@ -59,7 +59,7 @@ const budgetController = (function () {
   };
 })();
 
-// UIController
+// User Interface controller module
 const UIController = (function () {
   // DOMstrings object stores strings accessed by querySelector
   const DOMstrings = {
@@ -105,6 +105,18 @@ const UIController = (function () {
       document.querySelector(element).insertAdjacentHTML('beforeend', newHTML);
     },
 
+    clearFields: function () {
+      const fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+      // fields is a list, not an array, a shallow copy must be created
+      const fieldsArr = Array.prototype.slice.call(fields);
+
+      fieldsArr.forEach(function (field) {
+        field.value = '';
+      });
+      // focus should be back on description box after input
+      fieldsArr[0].focus();
+    },
+
     // makes the DOMstrings object public
     getDOMStrings: function () {
       return DOMstrings;
@@ -112,7 +124,7 @@ const UIController = (function () {
   };
 })();
 
-// global app controller
+// global app controller module
 const controller = (function (budgetCtrl, UICtrl) {
   const setupEventListeners = function () {
     const DOM = UICtrl.getDOMStrings();
@@ -136,6 +148,9 @@ const controller = (function (budgetCtrl, UICtrl) {
 
     // add new item to UI
     UICtrl.addListItem(newItem, input.type);
+
+    // clear fields
+    UICtrl.clearFields();
 
     // calculate budget
 
