@@ -22,12 +22,12 @@ const budgetController = (function () {
   // better to have one data structure than random floating variables
   const data = {
     allItems: {
-      exp: [],
-      inc: []
+      expense: [],
+      income: []
     },
     totals: {
-      exp: 0,
-      inc: 0
+      expense: 0,
+      income: 0
     }
   };
 
@@ -36,17 +36,17 @@ const budgetController = (function () {
     addItem: function (type, desc, val) {
       let newItem, ID;
       // create new ID
-      // TODO: fix TypeError: Cannot read property 'length' of undefined on following line
       if (data.allItems[type].length > 0) {
-        ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+        // TODO: cannot read property .id of undefined
+        ID = data.allItems[type][(data.allItems[type].length) - 1].id + 1;
       } else {
         ID = 0;
       }
 
       // create new item based on inc or exp type
-      if (type === 'exp') {
+      if (type === 'expense') {
         newItem = new Expense(ID, desc, val);
-      } else if (type === 'inc') {
+      } else if (type === 'income') {
         newItem = new Income(ID, desc, val);
       }
 
