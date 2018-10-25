@@ -84,6 +84,7 @@ const UIController = (function () {
     },
 
     addListItem: function (obj, type) {
+      // obj argument is each list item, type is either 'exp' or 'inc'
       let element, html, newHTML;
       // create HTML string with placeholder text
       if (type === 'income') {
@@ -97,6 +98,7 @@ const UIController = (function () {
       }
 
       // replace placeholder text with data
+      // refactor into function?
       newHTML = html.replace('%id%', obj.id);
       newHTML = newHTML.replace('%description%', obj.description);
       newHTML = newHTML.replace('%value%', obj.value);
@@ -105,6 +107,7 @@ const UIController = (function () {
       document.querySelector(element).insertAdjacentHTML('beforeend', newHTML);
     },
 
+    // clears input fields after value submission
     clearFields: function () {
       const fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
       // fields is a list, not an array, a shallow copy must be created
