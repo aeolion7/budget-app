@@ -142,6 +142,7 @@ const UIController = (function () {
   const DOMstrings = {
     budgetLabel: '.budget__value',
     container: '.container',
+    dateLabel: '.budget__title--month',
     expenseContainer: '.expenses__list',
     expenseLabel: '.budget__expenses--value',
     expensePercentageLabel: '.item__percentage',
@@ -152,6 +153,35 @@ const UIController = (function () {
     inputType: '.add__type',
     inputValue: '.add__value',
     percentageLabel: '.budget__expenses--percentage'
+  };
+
+  const formatNumber = (num, type) => {
+    let sign;
+    // + or - before number, 2 decimal points, comma if > 999
+    num = Math.abs(num).toFixed(2);
+
+    // split number between integer and decimal
+    const numSplit = num.split('.');
+    let integer = numSplit[0];
+    const decimal = numSplit[1];
+
+    if (integer.length > 3) {
+      integer = integer.substr(0, integer.length - 3) + ',' + integer.substr(integer.length - 3, 3);
+    }
+
+    if (num === '0.00') {
+      sign = '';
+    } else {
+      sign = type === 'expense' ? '-' : '+';
+    }
+
+    return sign + ' ' + integer + '.' + decimal;
+  };
+
+  const nodeListForEach = (list, callback) => {
+    for (let i = 0; i < list.length; i++) {
+      callback(list[i], i);
+    }
   };
 
   return {
@@ -184,10 +214,23 @@ const UIController = (function () {
       // refactor into function?
       newHTML = html.replace('%id%', obj.id);
       newHTML = newHTML.replace('%description%', obj.description);
-      newHTML = newHTML.replace('%value%', obj.value);
+      newHTML = newHTML.replace('%value%', formatNumber(obj.value, type));
 
       // insert HTML into DOM
       document.querySelector(element).insertAdjacentHTML('beforeend', newHTML);
+    },
+
+    changeType() {
+      const fields = document.querySelectorAll(
+        DOMstrings.inputType + ',' +
+        DOMstrings.inputDescription + ',' +
+        DOMstrings.inputValue);
+
+      nodeListForEach(fields, function (current) {
+        current.classList.toggle('red-focus');
+      });
+
+      document.querySelector(DOMstrings.inputButton).classList.toggle('red');
     },
 
     // clears input fields after value submission
@@ -209,7 +252,8 @@ const UIController = (function () {
     },
 
     displayBudget(obj) {
-      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+      const type = obj.budget > 0 ? 'income' : 'expense';
+      document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget, type);
       document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalIncome;
       document.querySelector(DOMstrings.expenseLabel).textContent = obj.totalExpenses;
 
@@ -223,12 +267,6 @@ const UIController = (function () {
     displayPercentages(percentages) {
       const fields = document.querySelectorAll(DOMstrings.expensePercentageLabel);
 
-      const nodeListForEach = (list, callback) => {
-        for (let i = 0; i < list.length; i++) {
-          callback(list[i], i);
-        }
-      };
-
       nodeListForEach(fields, function (current, index) {
         if (percentages[index] > 0) {
           current.textContent = percentages[index] + '%';
@@ -236,6 +274,16 @@ const UIController = (function () {
           current.textContent = '---';
         }
       });
+    },
+
+    displayDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+      document.querySelector(DOMstrings.dateLabel).textContent = `${ months[month]} ${year}`;
     },
 
     // makes the DOMstrings object public
@@ -260,6 +308,8 @@ const controller = (function (budgetCtrl, UICtrl) {
     });
 
     document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+    document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changeType);
   };
 
   const updateBudget = function () {
@@ -325,6 +375,7 @@ const controller = (function (budgetCtrl, UICtrl) {
   return {
     init() {
       console.log('Initializing...');
+      UICtrl.displayDate();
       setupEventListeners();
       // initialize UI with zeroes using an object literal
       UICtrl.displayBudget({
