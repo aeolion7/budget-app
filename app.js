@@ -144,6 +144,7 @@ const UIController = (function () {
     container: '.container',
     expenseContainer: '.expenses__list',
     expenseLabel: '.budget__expenses--value',
+    expensePercentageLabel: '.item__percentage',
     incomeContainer: '.income__list',
     incomeLabel: '.budget__income--value',
     inputButton: '.add__btn',
@@ -219,6 +220,24 @@ const UIController = (function () {
       }
     },
 
+    displayPercentages(percentages) {
+      const fields = document.querySelectorAll(DOMstrings.expensePercentageLabel);
+
+      const nodeListForEach = (list, callback) => {
+        for (let i = 0; i < list.length; i++) {
+          callback(list[i], i);
+        }
+      };
+
+      nodeListForEach(fields, function (current, index) {
+        if (percentages[index] > 0) {
+          current.textContent = percentages[index] + '%';
+        } else {
+          current.textContent = '---';
+        }
+      });
+    },
+
     // makes the DOMstrings object public
     getDOMStrings() {
       return DOMstrings;
@@ -258,7 +277,7 @@ const controller = (function (budgetCtrl, UICtrl) {
     // read percentages from budget controller
     const percentages = budgetCtrl.getPercentages();
     // update UI
-    console.log(percentages);
+    UICtrl.displayPercentages(percentages);
   };
 
   const ctrlAddItem = function () {
