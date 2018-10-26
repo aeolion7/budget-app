@@ -8,6 +8,19 @@ const budgetController = (function () {
       this.id = id;
       this.description = description;
       this.value = value;
+      this.percentage = -1;
+    }
+
+    calcPercentage(totalIncome) {
+      if (totalIncome > 0) {
+        this.percentage = Math.round((this.value / totalIncome) * 100);
+      } else {
+        this.percentage = -1;
+      }
+    }
+
+    getPercentage() {
+      return this.percentage;
     }
   }
 
@@ -82,6 +95,12 @@ const budgetController = (function () {
       }
     },
 
+    calculatePercentages() {
+      data.allItems.expense.forEach(function (expense) {
+        expense.calcPercentage(data.totals.income);
+      });
+    },
+
     deleteItem(type, id) {
       // [1, 2, 3, 6, 8] => id = 3 would be 6
       const ids = data.allItems[type].map(function (currentItem) {
@@ -102,6 +121,13 @@ const budgetController = (function () {
         totalExpenses: data.totals.expense,
         percentage: data.percentage
       };
+    },
+
+    getPercentages() {
+      const allPercentages = data.allItems.expense.map(function (exp) {
+        return exp.getPercentage();
+      });
+      return allPercentages;
     },
 
     testing() {
@@ -226,6 +252,15 @@ const controller = (function (budgetCtrl, UICtrl) {
     UICtrl.displayBudget(budget);
   };
 
+  const updatePercentages = function () {
+    // calculate percentages
+    budgetCtrl.calculatePercentages();
+    // read percentages from budget controller
+    const percentages = budgetCtrl.getPercentages();
+    // update UI
+    console.log(percentages);
+  };
+
   const ctrlAddItem = function () {
     // get field input data
     const input = UICtrl.getInput();
@@ -243,6 +278,9 @@ const controller = (function (budgetCtrl, UICtrl) {
 
       // calculate and update budget
       updateBudget();
+
+      // update percentages
+      updatePercentages();
     }
   };
 
@@ -259,14 +297,15 @@ const controller = (function (budgetCtrl, UICtrl) {
       budgetCtrl.deleteItem(type, ID);
       // delete item from UI
       UICtrl.deleteListItem(itemID);
-      // update and show new budget
+      // update and show new budget and percentages
       updateBudget();
+      updatePercentages();
     }
   };
 
   return {
     init() {
-      console.log('Application initialized.');
+      console.log('Initializing...');
       setupEventListeners();
       // initialize UI with zeroes using an object literal
       UICtrl.displayBudget({
@@ -275,6 +314,7 @@ const controller = (function (budgetCtrl, UICtrl) {
         totalExpenses: 0,
         percentage: 0
       });
+      console.log('Initialization complete.');
     }
   };
 })(budgetController, UIController);
