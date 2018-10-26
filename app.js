@@ -82,6 +82,19 @@ const budgetController = (function () {
       }
     },
 
+    deleteItem(type, id) {
+      // [1, 2, 3, 6, 8] => id = 3 would be 6
+      const ids = data.allItems[type].map(function (currentItem) {
+        return currentItem.id;
+      });
+
+      const index = ids.indexOf(id);
+
+      if (index !== -1) {
+        data.allItems[type].splice(index, 1);
+      }
+    },
+
     getBudget() {
       return {
         budget: data.budget,
@@ -102,6 +115,7 @@ const UIController = (function () {
   // DOMstrings object stores strings accessed by querySelector
   const DOMstrings = {
     budgetLabel: '.budget__value',
+    container: '.container',
     expenseContainer: '.expenses__list',
     expenseLabel: '.budget__expenses--value',
     incomeContainer: '.income__list',
@@ -194,6 +208,8 @@ const controller = (function (budgetCtrl, UICtrl) {
         ctrlAddItem();
       }
     });
+
+    document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
   };
 
   const updateBudget = function () {
@@ -222,6 +238,24 @@ const controller = (function (budgetCtrl, UICtrl) {
 
       // calculate and update budget
       updateBudget();
+    }
+  };
+
+  const ctrlDeleteItem = function (event) {
+    const itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+    if (itemID) {
+      // income-1 or expense-3
+      const splitID = itemID.split('-');
+      const type = splitID[0];
+      const ID = parseInt(splitID[1]);
+
+      // delete item from data structure
+      budgetCtrl.deleteItem(type, ID);
+      // delete item from UI
+
+      // update and show new budget
+
     }
   };
 
